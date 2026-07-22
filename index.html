@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#111827" />
+  <title>Which Ninja Turtle Are You?</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: rgba(17, 24, 39, 0.92);
+      --panel-2: rgba(31, 41, 55, 0.92);
+      --text: #f9fafb;
+      --muted: #cbd5e1;
+      --line: rgba(255, 255, 255, 0.12);
+      --green: #78c850;
+      --green-dark: #3f7d2a;
+      --yellow: #facc15;
+      --blue: #2f80ed;
+      --red: #ef4444;
+      --purple: #8b5cf6;
+      --orange: #f97316;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(120, 200, 80, 0.22), transparent 32rem),
+        radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.18), transparent 28rem),
+        linear-gradient(135deg, #0a0f1d, #111827 55%, #09110a);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.05;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(to bottom, black, transparent 78%);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app-shell {
+      width: min(980px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 28px 0 50px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 800;
+      font-size: 0.8rem;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      position: relative;
+      background: linear-gradient(145deg, #7ed957, #356e27);
+      box-shadow: inset 0 -8px 14px rgba(0,0,0,0.22);
+      border: 2px solid rgba(255,255,255,0.22);
+    }
+
+    .brand-mark::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      right: 4px;
+      top: 14px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--purple);
+      box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: white;
+      left: 10px;
+      top: 16px;
+      box-shadow: 12px 0 white;
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+    }
+
+    .screen {
+      display: none;
+      padding: clamp(24px, 5vw, 56px);
+      animation: fadeIn 320ms ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 8px 12px;
+      border: 1px solid rgba(120, 200, 80, 0.35);
+      border-radius: 999px;
+      color: #d9f99d;
+      background: rgba(120, 200, 80, 0.08);
+      font-weight: 800;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 16px;
+      font-size: clamp(2.3rem, 8vw, 5.7rem);
+      line-height: 0.94;
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+      text-shadow: 0 7px 0 rgba(0,0,0,0.25);
+    }
+
+    h1 span {
+      display: block;
+      color: var(--green);
+      -webkit-text-stroke: 1px rgba(255,255,255,0.08);
+    }
+
+    .subtitle {
+      max-width: 640px;
+      margin: 0 auto 28px;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      line-height: 1.7;
+    }
+
+    .turtle-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 30px auto;
+      max-width: 600px;
+    }
+
+    .turtle-icon {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 28%, rgba(255,255,255,0.2), transparent 25%),
+        linear-gradient(145deg, #7ed957, #345d27);
+      border: 4px solid rgba(255,255,255,0.1);
+      position: relative;
+      box-shadow: inset 0 -12px 20px rgba(0,0,0,0.25), 0 12px 30px rgba(0,0,0,0.2);
+    }
+
+    .turtle-icon::before {
+      content: "";
+      position: absolute;
+      left: 5%;
+      right: 5%;
+      top: 39%;
+      height: 22%;
+      border-radius: 999px;
+      background: var(--mask);
+      transform: rotate(var(--tilt, 0deg));
+    }
+
+    .turtle-icon::after {
+      content: "•  •";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 39%;
+      text-align: center;
+      color: white;
+      font-weight: 900;
+      letter-spacing: 0.7em;
+      padding-left: 0.7em;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .leo { --mask: var(--blue); --tilt: -3deg; }
+    .raph { --mask: var(--red); --tilt: 3deg; }
+    .donnie { --mask: var(--purple); --tilt: -2deg; }
+    .mikey { --mask: var(--orange); --tilt: 2deg; }
+
+    .input-wrap {
+      max-width: 460px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #e5e7eb;
+      font-weight: 800;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 16px 18px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 16px;
+      color: var(--text);
+      background: rgba(2, 6, 23, 0.5);
+      outline: none;
+      transition: border 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: rgba(120, 200, 80, 0.9);
+      box-shadow: 0 0 0 4px rgba(120, 200, 80, 0.13);
+      transform: translateY(-1px);
+    }
+
+    .error {
+      min-height: 22px;
+      margin: 8px 0 0;
+      color: #fca5a5;
+      font-size: 0.9rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 14px 22px;
+      border: 0;
+      border-radius: 16px;
+      font-weight: 900;
+      transition: transform 150ms ease, filter 150ms ease, box-shadow 150ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      color: #07110a;
+      background: linear-gradient(180deg, #9be86d, #6ab844);
+      box-shadow: 0 12px 30px rgba(120, 200, 80, 0.22);
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+
+    .start-button {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .quiz-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 0.92rem;
+    }
+
+    .progress-track {
+      height: 10px;
+      margin-bottom: 34px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #78c850, #b7f57c);
+      transition: width 300ms ease;
+    }
+
+    #questionTitle {
+      max-width: 760px;
+      margin-bottom: 26px;
+      font-size: clamp(1.7rem, 4vw, 2.7rem);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+    }
+
+    .answers {
+      display: grid;
+      gap: 14px;
+    }
+
+    .answer-btn {
+      width: 100%;
+      min-height: 64px;
+      padding: 16px 18px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      color: var(--text);
+      background: rgba(255,255,255,0.055);
+      text-align: left;
+      font-weight: 800;
+      line-height: 1.35;
+      transition: transform 150ms ease, border 150ms ease, background 150ms ease;
+    }
+
+    .answer-btn:hover,
+    .answer-btn:focus-visible {
+      transform: translateX(4px);
+      border-color: rgba(120, 200, 80, 0.7);
+      background: rgba(120, 200, 80, 0.1);
+      outline: none;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: minmax(240px, 0.85fr) minmax(280px, 1.15fr);
+      gap: clamp(28px, 5vw, 50px);
+      align-items: center;
+    }
+
+    .result-portrait {
+      display: grid;
+      place-items: center;
+      min-height: 380px;
+      padding: 30px;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 50% 20%, var(--result-glow, rgba(120,200,80,0.3)), transparent 45%),
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.11);
+    }
+
+    .big-turtle {
+      width: min(280px, 80vw);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 28%, rgba(255,255,255,0.22), transparent 24%),
+        linear-gradient(145deg, #7ed957, #315b25);
+      border: 8px solid rgba(255,255,255,0.1);
+      position: relative;
+      box-shadow: inset 0 -20px 34px rgba(0,0,0,0.25), 0 24px 50px rgba(0,0,0,0.35);
+    }
+
+    .big-turtle::before {
+      content: "";
+      position: absolute;
+      left: 4%;
+      right: 4%;
+      top: 39%;
+      height: 23%;
+      border-radius: 999px;
+      background: var(--result-color, var(--purple));
+      transform: rotate(-2deg);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    }
+
+    .eye {
+      position: absolute;
+      top: 45%;
+      width: 13%;
+      aspect-ratio: 1.2;
+      border-radius: 50%;
+      background: white;
+      z-index: 1;
+      box-shadow: inset 0 -2px 2px rgba(0,0,0,0.16);
+    }
+
+    .eye.left { left: 27%; }
+    .eye.right { right: 27%; }
+
+    .eye::after {
+      content: "";
+      position: absolute;
+      width: 30%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: #111827;
+      left: 35%;
+      top: 35%;
+    }
+
+    .mouth {
+      position: absolute;
+      width: 32%;
+      height: 15%;
+      left: 34%;
+      top: 65%;
+      border-bottom: 6px solid rgba(7,17,10,0.7);
+      border-radius: 0 0 50% 50%;
+      transform: rotate(-2deg);
+    }
+
+    .result-copy .eyebrow {
+      margin-bottom: 12px;
+    }
+
+    .result-copy h2 {
+      margin-bottom: 4px;
+      font-size: clamp(2.2rem, 6vw, 4.6rem);
+      letter-spacing: -0.055em;
+      line-height: 0.98;
+      text-transform: uppercase;
+    }
+
+    .result-copy h2 span {
+      color: var(--result-color, var(--green));
+    }
+
+    .result-tagline {
+      margin: 14px 0 18px;
+      color: #f8fafc;
+      font-size: 1.18rem;
+      font-weight: 900;
+    }
+
+    .result-description {
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 1.02rem;
+    }
+
+    .traits {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 22px 0 28px;
+    }
+
+    .trait {
+      padding: 8px 11px;
+      border-radius: 999px;
+      color: #f8fafc;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-weight: 800;
+      font-size: 0.86rem;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-note {
+      margin: 20px 0 0;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 760px) {
+      .app-shell {
+        width: min(100% - 16px, 980px);
+        padding-top: 14px;
+      }
+
+      .screen {
+        padding: 24px 20px 28px;
+      }
+
+      .card {
+        border-radius: 22px;
+      }
+
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .result-portrait {
+        min-height: auto;
+        padding: 26px;
+      }
+
+      .big-turtle {
+        width: min(230px, 75vw);
+      }
+
+      .button-row {
+        flex-direction: column;
+      }
+
+      .button-row .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 460px) {
+      .turtle-row {
+        gap: 8px;
+      }
+
+      .turtle-icon {
+        border-width: 2px;
+      }
+
+      .quiz-topbar {
+        font-size: 0.8rem;
+      }
+
+      .answer-btn {
+        min-height: 58px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <div class="brand" aria-label="Sewer personality quiz">
+      <span class="brand-mark" aria-hidden="true"></span>
+      Sewer Personality Lab
+    </div>
+
+    <section class="card" aria-live="polite">
+      <div id="welcomeScreen" class="screen active">
+        <div class="hero">
+          <div class="eyebrow">12-question personality quiz</div>
+          <h1>Which Ninja <span>Turtle Are You?</span></h1>
+          <p class="subtitle">
+            Answer honestly, trust your instincts, and discover whether you lead like Leonardo,
+            charge ahead like Raphael, think like Donatello, or bring the party like Michelangelo.
+          </p>
+
+          <div class="turtle-row" aria-hidden="true">
+            <div class="turtle-icon leo"></div>
+            <div class="turtle-icon raph"></div>
+            <div class="turtle-icon donnie"></div>
+            <div class="turtle-icon mikey"></div>
+          </div>
+
+          <div class="input-wrap">
+            <label for="usernameInput">What should your result card call you?</label>
+            <input
+              id="usernameInput"
+              type="text"
+              maxlength="24"
+              placeholder="Enter your username"
+              autocomplete="nickname"
+            />
+            <p id="usernameError" class="error" role="alert"></p>
+            <button id="startButton" class="btn btn-primary start-button" type="button">
+              Start the Quiz
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="quizScreen" class="screen">
+        <div class="quiz-topbar">
+          <span id="questionCounter">Question 1 of 12</span>
+          <span id="playerNameDisplay"></span>
+        </div>
+        <div class="progress-track" aria-label="Quiz progress">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+
+        <h2 id="questionTitle"></h2>
+        <div id="answersContainer" class="answers"></div>
+      </div>
+
+      <div id="resultScreen" class="screen">
+        <div class="result-grid">
+          <div id="resultPortrait" class="result-portrait" aria-hidden="true">
+            <div class="big-turtle">
+              <span class="eye left"></span>
+              <span class="eye right"></span>
+              <span class="mouth"></span>
+            </div>
+          </div>
+
+          <div class="result-copy">
+            <div class="eyebrow">Your sewer identity</div>
+            <h2><span id="resultUsername"></span> is:<br><span id="resultName"></span></h2>
+            <p id="resultTagline" class="result-tagline"></p>
+            <p id="resultDescription" class="result-description"></p>
+            <div id="traitsContainer" class="traits"></div>
+
+            <div class="button-row">
+              <button id="downloadButton" class="btn btn-primary" type="button">
+                Download My Result Card
+              </button>
+              <button id="restartButton" class="btn btn-secondary" type="button">
+                Take It Again
+              </button>
+            </div>
+
+            <p class="footer-note">
+              This fan-made personality quiz uses original artwork and is not affiliated with or endorsed by Nickelodeon.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <canvas id="resultCanvas" class="sr-only" width="1200" height="1500"></canvas>
+
+  <script>
+    "use strict";
+
+    const turtleData = {
+      leonardo: {
+        name: "Leonardo",
+        color: "#2f80ed",
+        glow: "rgba(47, 128, 237, 0.35)",
+        tagline: "Focused. Loyal. Born to lead.",
+        description:
+          "You naturally step up when things get chaotic. People trust your judgment because you stay composed, protect the team, and keep everyone moving toward the goal. Your challenge is remembering that you do not have to carry everything alone.",
+        traits: ["Leader", "Dependable", "Disciplined", "Protective"]
+      },
+      raphael: {
+        name: "Raphael",
+        color: "#ef4444",
+        glow: "rgba(239, 68, 68, 0.35)",
+        tagline: "Bold. Passionate. Fiercely loyal.",
+        description:
+          "You feel everything at full volume and never hesitate to defend the people you care about. You are brave, direct, and powered by conviction. Your challenge is giving yourself a moment to cool down before charging into battle.",
+        traits: ["Fearless", "Competitive", "Direct", "Loyal"]
+      },
+      donatello: {
+        name: "Donatello",
+        color: "#8b5cf6",
+        glow: "rgba(139, 92, 246, 0.35)",
+        tagline: "Curious. Clever. Always inventing.",
+        description:
+          "Your brain is always working on a better solution. You notice patterns, ask smart questions, and love understanding how things work. Your challenge is knowing when the plan is good enough and it is time to act.",
+        traits: ["Inventive", "Analytical", "Curious", "Resourceful"]
+      },
+      michelangelo: {
+        name: "Michelangelo",
+        color: "#f97316",
+        glow: "rgba(249, 115, 22, 0.35)",
+        tagline: "Creative. Social. Pure good energy.",
+        description:
+          "You bring fun, warmth, and imagination wherever you go. You know how to lighten the mood and help people feel included. Your challenge is staying focused when the excitement wears off or something less fun needs your attention.",
+        traits: ["Funny", "Creative", "Spontaneous", "Optimistic"]
+      }
+    };
+
+    const questions = [
+      {
+        text: "Your group hits a serious problem. What do you do first?",
+        answers: [
+          { text: "Take charge and organize a plan.", turtle: "leonardo" },
+          { text: "Confront the problem head-on.", turtle: "raphael" },
+          { text: "Study what happened and find the smartest fix.", turtle: "donatello" },
+          { text: "Keep everyone calm and make the situation less tense.", turtle: "michelangelo" }
+        ]
+      },
+      {
+        text: "Which role do you naturally take in a group?",
+        answers: [
+          { text: "The leader who keeps everyone on track.", turtle: "leonardo" },
+          { text: "The protector who says what everyone is thinking.", turtle: "raphael" },
+          { text: "The problem-solver with the useful information.", turtle: "donatello" },
+          { text: "The entertainer who keeps the energy alive.", turtle: "michelangelo" }
+        ]
+      },
+      {
+        text: "Someone challenges your opinion. How do you react?",
+        answers: [
+          { text: "Listen, stay calm, and explain my reasoning.", turtle: "leonardo" },
+          { text: "Stand my ground and debate them immediately.", turtle: "raphael" },
+          { text: "Ask questions and look for evidence.", turtle: "donatello" },
+          { text: "Make a joke, then find a compromise.", turtle: "michelangelo" }
+        ]
+      },
+      {
+        text: "Pick your ideal Friday night.",
+        answers: [
+          { text: "A planned night with my closest people.", turtle: "leonardo" },
+          { text: "Something competitive, intense, or adventurous.", turtle: "raphael" },
+          { text: "Gaming, building something, or learning a new skill.", turtle: "donatello" },
+          { text: "A spontaneous party, concert, or late-night food run.", turtle: "michelangelo" }
+        ]
+      },
+      {
+        text: "Which quality matters most to you?",
+        answers: [
+          { text: "Honor", turtle: "leonardo" },
+          { text: "Courage", turtle: "raphael" },
+          { text: "Knowledge", turtle: "donatello" },
+          { text: "Joy", turtle: "michelangelo" }
+        ]
+      },
+      {
+        text: "What do your friends depend on you for?",
+        answers: [
+          { text: "Reliable advice and steady leadership.", turtle: "leonardo" },
+          { text: "Protection and complete honesty.", turtle: "raphael" },
+          { text: "Fixing things and finding answers.", turtle: "donatello" },
+          { text: "Laughter and emotional support.", turtle: "michelangelo" }
+        ]
+      },
+      {
+        text: "Choose the weakness that sounds most familiar.",
+        answers: [
+          { text: "I can become too serious or controlling.", turtle: "leonardo" },
+          { text: "My temper can get ahead of me.", turtle: "raphael" },
+          { text: "I overthink and delay decisions.", turtle: "donatello" },
+          { text: "I get distracted or avoid boring responsibilities.", turtle: "michelangelo" }
+        ]
+      },
+      {
+        text: "You have one free afternoon. What sounds best?",
+        answers: [
+          { text: "Train, organize, or work toward a personal goal.", turtle: "leonardo" },
+          { text: "Do something physical and challenging.", turtle: "raphael" },
+          { text: "Experiment with a gadget, recipe, or new idea.", turtle: "donatello" },
+          { text: "Follow the fun and see where the day goes.", turtle: "michelangelo" }
+        ]
+      },
+      {
+        text: "Pick your perfect pizza.",
+        answers: [
+          { text: "Classic, balanced, and dependable.", turtle: "leonardo" },
+          { text: "Extra spicy with a serious amount of toppings.", turtle: "raphael" },
+          { text: "A carefully engineered combination no one else considered.", turtle: "donatello" },
+          { text: "Something wild, chaotic, and probably delicious.", turtle: "michelangelo" }
+        ]
+      },
+      {
+        text: "A friend is having a terrible day. What is your move?",
+        answers: [
+          { text: "Help them make a plan and remind them they are not alone.", turtle: "leonardo" },
+          { text: "Get angry on their behalf and offer backup.", turtle: "raphael" },
+          { text: "Help identify the cause and solve the actual problem.", turtle: "donatello" },
+          { text: "Show up with snacks, jokes, and a distraction.", turtle: "michelangelo" }
+        ]
+      },
+      {
+        text: "Which place feels most like your headquarters?",
+        answers: [
+          { text: "A clean training room with everything in its place.", turtle: "leonardo" },
+          { text: "A gritty gym where I can blow off steam.", turtle: "raphael" },
+          { text: "A workshop full of screens, tools, and half-finished projects.", turtle: "donatello" },
+          { text: "A colorful lounge with music, games, and snacks.", turtle: "michelangelo" }
+        ]
+      },
+      {
+        text: "Choose the motto that fits you best.",
+        answers: [
+          { text: "The team comes first.", turtle: "leonardo" },
+          { text: "Never back down.", turtle: "raphael" },
+          { text: "There is always a smarter solution.", turtle: "donatello" },
+          { text: "Life is better when everyone is having fun.", turtle: "michelangelo" }
+        ]
+      }
+    ];
+
+    const state = {
+      username: "",
+      currentQuestion: 0,
+      scores: {
+        leonardo: 0,
+        raphael: 0,
+        donatello: 0,
+        michelangelo: 0
+      },
+      resultKey: ""
+    };
+
+    const welcomeScreen = document.getElementById("welcomeScreen");
+    const quizScreen = document.getElementById("quizScreen");
+    const resultScreen = document.getElementById("resultScreen");
+    const usernameInput = document.getElementById("usernameInput");
+    const usernameError = document.getElementById("usernameError");
+    const startButton = document.getElementById("startButton");
+    const questionCounter = document.getElementById("questionCounter");
+    const playerNameDisplay = document.getElementById("playerNameDisplay");
+    const progressBar = document.getElementById("progressBar");
+    const questionTitle = document.getElementById("questionTitle");
+    const answersContainer = document.getElementById("answersContainer");
+    const resultPortrait = document.getElementById("resultPortrait");
+    const resultUsername = document.getElementById("resultUsername");
+    const resultName = document.getElementById("resultName");
+    const resultTagline = document.getElementById("resultTagline");
+    const resultDescription = document.getElementById("resultDescription");
+    const traitsContainer = document.getElementById("traitsContainer");
+    const downloadButton = document.getElementById("downloadButton");
+    const restartButton = document.getElementById("restartButton");
+    const canvas = document.getElementById("resultCanvas");
+    const ctx = canvas.getContext("2d");
+
+    function showScreen(screen) {
+      [welcomeScreen, quizScreen, resultScreen].forEach(item => item.classList.remove("active"));
+      screen.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function sanitizeUsername(value) {
+      return value.replace(/[<>]/g, "").trim().slice(0, 24);
+    }
+
+    function startQuiz() {
+      const username = sanitizeUsername(usernameInput.value);
+
+      if (!username) {
+        usernameError.textContent = "Please enter a username first.";
+        usernameInput.focus();
+        return;
+      }
+
+      usernameError.textContent = "";
+      state.username = username;
+      state.currentQuestion = 0;
+      state.scores = {
+        leonardo: 0,
+        raphael: 0,
+        donatello: 0,
+        michelangelo: 0
+      };
+
+      localStorage.setItem("turtleQuizUsername", username);
+      playerNameDisplay.textContent = username;
+      showScreen(quizScreen);
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const question = questions[state.currentQuestion];
+      const progress = ((state.currentQuestion) / questions.length) * 100;
+
+      questionCounter.textContent = `Question ${state.currentQuestion + 1} of ${questions.length}`;
+      progressBar.style.width = `${progress}%`;
+      questionTitle.textContent = question.text;
+      answersContainer.innerHTML = "";
+
+      question.answers.forEach(answer => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "answer-btn";
+        button.textContent = answer.text;
+        button.addEventListener("click", () => selectAnswer(answer.turtle));
+        answersContainer.appendChild(button);
+      });
+    }
+
+    function selectAnswer(turtle) {
+      state.scores[turtle] += 1;
+      state.currentQuestion += 1;
+
+      if (state.currentQuestion >= questions.length) {
+        progressBar.style.width = "100%";
+        window.setTimeout(showResult, 160);
+      } else {
+        renderQuestion();
+      }
+    }
+
+    function determineResult() {
+      const entries = Object.entries(state.scores);
+      const highestScore = Math.max(...entries.map(([, score]) => score));
+      const tied = entries
+        .filter(([, score]) => score === highestScore)
+        .map(([key]) => key);
+
+      if (tied.length === 1) {
+        return tied[0];
+      }
+
+      // Friendly tie-breaker based on the username so repeated results stay consistent.
+      const nameValue = Array.from(state.username)
+        .reduce((total, char) => total + char.charCodeAt(0), 0);
+
+      return tied[nameValue % tied.length];
+    }
+
+    function showResult() {
+      state.resultKey = determineResult();
+      const result = turtleData[state.resultKey];
+
+      document.documentElement.style.setProperty("--result-color", result.color);
+      document.documentElement.style.setProperty("--result-glow", result.glow);
+      resultPortrait.style.setProperty("--result-color", result.color);
+      resultPortrait.style.setProperty("--result-glow", result.glow);
+
+      resultUsername.textContent = state.username;
+      resultName.textContent = result.name;
+      resultTagline.textContent = result.tagline;
+      resultDescription.textContent = result.description;
+      traitsContainer.innerHTML = "";
+
+      result.traits.forEach(trait => {
+        const span = document.createElement("span");
+        span.className = "trait";
+        span.textContent = trait;
+        traitsContainer.appendChild(span);
+      });
+
+      showScreen(resultScreen);
+    }
+
+    function roundedRect(context, x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      context.beginPath();
+      context.moveTo(x + r, y);
+      context.arcTo(x + width, y, x + width, y + height, r);
+      context.arcTo(x + width, y + height, x, y + height, r);
+      context.arcTo(x, y + height, x, y, r);
+      context.arcTo(x, y, x + width, y, r);
+      context.closePath();
+    }
+
+    function fitText(context, text, maxWidth, startingSize, minimumSize = 28) {
+      let fontSize = startingSize;
+      while (fontSize > minimumSize) {
+        context.font = `900 ${fontSize}px Arial, sans-serif`;
+        if (context.measureText(text).width <= maxWidth) return fontSize;
+        fontSize -= 2;
+      }
+      return minimumSize;
+    }
+
+    function wrapText(context, text, maxWidth) {
+      const words = text.split(" ");
+      const lines = [];
+      let line = "";
+
+      words.forEach(word => {
+        const testLine = line ? `${line} ${word}` : word;
+        if (context.measureText(testLine).width > maxWidth && line) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = testLine;
+        }
+      });
+
+      if (line) lines.push(line);
+      return lines;
+    }
+
+    function drawResultCard() {
+      const result = turtleData[state.resultKey];
+      const width = canvas.width;
+      const height = canvas.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      const bg = ctx.createLinearGradient(0, 0, width, height);
+      bg.addColorStop(0, "#08111f");
+      bg.addColorStop(0.58, "#111827");
+      bg.addColorStop(1, "#071107");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, width, height);
+
+      const glow = ctx.createRadialGradient(width * 0.5, 350, 20, width * 0.5, 350, 520);
+      glow.addColorStop(0, `${result.color}88`);
+      glow.addColorStop(1, `${result.color}00`);
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, width, 900);
+
+      ctx.globalAlpha = 0.08;
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1;
+      for (let x = 0; x <= width; x += 60) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      for (let y = 0; y <= height; y += 60) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+
+      roundedRect(ctx, 70, 70, width - 140, height - 140, 44);
+      ctx.fillStyle = "rgba(17, 24, 39, 0.92)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.16)";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.fillStyle = "#d9f99d";
+      ctx.font = "900 28px Arial, sans-serif";
+      ctx.textAlign = "center";
+      ctx.letterSpacing = "3px";
+      ctx.fillText("SEWER PERSONALITY LAB", width / 2, 145);
+
+      const centerX = width / 2;
+      const faceY = 470;
+      const faceRadius = 250;
+
+      const faceGradient = ctx.createRadialGradient(centerX - 80, faceY - 100, 20, centerX, faceY, faceRadius);
+      faceGradient.addColorStop(0, "#9be86d");
+      faceGradient.addColorStop(1, "#356e27");
+      ctx.fillStyle = faceGradient;
+      ctx.beginPath();
+      ctx.arc(centerX, faceY, faceRadius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.15)";
+      ctx.lineWidth = 10;
+      ctx.stroke();
+
+      roundedRect(ctx, centerX - 250, faceY - 58, 500, 120, 60);
+      ctx.fillStyle = result.color;
+      ctx.fill();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.ellipse(centerX - 82, faceY, 48, 34, 0, 0, Math.PI * 2);
+      ctx.ellipse(centerX + 82, faceY, 48, 34, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#111827";
+      ctx.beginPath();
+      ctx.arc(centerX - 82, faceY + 2, 13, 0, Math.PI * 2);
+      ctx.arc(centerX + 82, faceY + 2, 13, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = "rgba(7, 17, 10, 0.75)";
+      ctx.lineWidth = 14;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.arc(centerX, faceY + 70, 95, 0.25, Math.PI - 0.25);
+      ctx.stroke();
+
+      const usernameLine = `${state.username} is:`;
+      const usernameSize = fitText(ctx, usernameLine, width - 220, 70, 42);
+      ctx.font = `900 ${usernameSize}px Arial, sans-serif`;
+      ctx.fillStyle = "#f8fafc";
+      ctx.textAlign = "center";
+      ctx.fillText(usernameLine, centerX, 830);
+
+      const resultSize = fitText(ctx, result.name.toUpperCase(), width - 180, 120, 68);
+      ctx.font = `900 ${resultSize}px Arial, sans-serif`;
+      ctx.fillStyle = result.color;
+      ctx.fillText(result.name.toUpperCase(), centerX, 950);
+
+      ctx.font = "900 42px Arial, sans-serif";
+      ctx.fillStyle = "#f8fafc";
+      ctx.fillText(result.tagline, centerX, 1030);
+
+      ctx.font = "700 31px Arial, sans-serif";
+      ctx.fillStyle = "#cbd5e1";
+      const descriptionLines = wrapText(ctx, result.description, width - 250).slice(0, 5);
+      descriptionLines.forEach((line, index) => {
+        ctx.fillText(line, centerX, 1115 + index * 43);
+      });
+
+      const traitY = 1360;
+      const traitGap = 18;
+      ctx.font = "800 28px Arial, sans-serif";
+      const traitWidths = result.traits.map(trait => ctx.measureText(trait).width + 44);
+      const totalTraitWidth = traitWidths.reduce((sum, item) => sum + item, 0) + traitGap * (traitWidths.length - 1);
+      let startX = centerX - totalTraitWidth / 2;
+
+      result.traits.forEach((trait, index) => {
+        const pillWidth = traitWidths[index];
+        roundedRect(ctx, startX, traitY - 34, pillWidth, 54, 27);
+        ctx.fillStyle = "rgba(255,255,255,0.09)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,0.16)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = "#f8fafc";
+        ctx.fillText(trait, startX + pillWidth / 2, traitY + 3);
+        startX += pillWidth + traitGap;
+      });
+
+      return canvas.toDataURL("image/png");
+    }
+
+    function downloadResultCard() {
+      const image = drawResultCard();
+      const safeName = state.username
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "turtle-fan";
+
+      const link = document.createElement("a");
+      link.download = `${safeName}-${state.resultKey}-result.png`;
+      link.href = image;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    function restartQuiz() {
+      state.currentQuestion = 0;
+      state.resultKey = "";
+      usernameInput.value = state.username;
+      showScreen(welcomeScreen);
+      usernameInput.focus();
+    }
+
+    startButton.addEventListener("click", startQuiz);
+    downloadButton.addEventListener("click", downloadResultCard);
+    restartButton.addEventListener("click", restartQuiz);
+
+    usernameInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") startQuiz();
+    });
+
+    usernameInput.addEventListener("input", () => {
+      usernameError.textContent = "";
+    });
+
+    const savedUsername = localStorage.getItem("turtleQuizUsername");
+    if (savedUsername) {
+      usernameInput.value = savedUsername;
+    }
+  </script>
+</body>
+</html>
